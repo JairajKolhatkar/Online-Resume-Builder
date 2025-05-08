@@ -1,0 +1,3 @@
+@echo off
+echo Starting OBuilder Resume Application...
+npm run dev 

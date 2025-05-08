@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Template - Resume Builder</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .template-card {
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .template-preview {
+            height: 420px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .template-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: transform 1s ease;
+        }
+        
+        .template-card:hover .template-preview img {
+            transform: translateY(-25%);
+        }
+        
+        .template-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .template-card:hover .template-overlay {
+            opacity: 1;
+        }
+        
+        .template-info {
+            padding: 20px;
+            background-color: var(--card-bg);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .template-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--header-color);
+        }
+        
+        .template-description {
+            color: var(--muted-text);
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        .template-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .template-header::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        .template-header h2 {
+            font-weight: 700;
+            color: var(--header-color);
+            margin-bottom: 15px;
+        }
+        
+        .template-header p {
+            color: var(--muted-text);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .template-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .preview-modal .modal-dialog {
+            max-width: 85%;
+            margin: 1.75rem auto;
+            height: 85vh;
+        }
+
+        .preview-modal .modal-content {
+            background-color: var(--card-bg);
+            height: 100%;
+        }
+
+        .preview-modal .modal-body {
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        .preview-modal .modal-body img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .preview-modal .modal-header {
+            border-bottom-color: var(--border-color);
+        }
+        
+        .preview-modal .modal-footer {
+            border-top-color: var(--border-color);
+        }
+        
+        /* Template feature tags */
+        .template-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .template-feature {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            border-radius: 30px;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .dark-theme .template-feature {
+            background-color: rgba(67, 97, 238, 0.2);
+        }
+
+        .preview-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        .preview-btn:hover {
+            transform: scale(1.1);
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .template-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .template-tag.popular {
+            background-color: var(--warning-color);
+        }
+        
+        .template-tag.new {
+            background-color: var(--success-color);
+        }
+        
+        /* Category filters */
+        .template-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .template-filter {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .template-filter:hover {
+            background-color: var(--form-bg);
+            transform: translateY(-2px);
+        }
+        
+        .template-filter.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .select-btn {
+            padding: 8px 20px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="fade-in">
+    <div class="api-background" id="apiBackground"></div>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fas fa-file-alt me-2"></i>Resume Builder</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-resumes.html"><i class="fas fa-copy me-1"></i> My Resumes</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="form-check form-switch d-flex align-items-center me-3">
+                            <input class="form-check-input me-2" type="checkbox" id="themeSwitch">
+                            <label class="form-check-label text-white" for="themeSwitch">
+                                <i class="fas fa-moon"></i>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> <span id="userNameDisplay">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>History</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="template-header">
+            <h2>Choose Your Resume Template</h2>
+            <p>Select a professional template to showcase your skills and experience. Each template is designed to help you stand out from the crowd.</p>
+        </div>
+        
+        <!-- Template Filters -->
+        <div class="template-filters">
+            <div class="template-filter active" data-filter="all">All Templates</div>
+            <div class="template-filter" data-filter="professional">Professional</div>
+            <div class="template-filter" data-filter="creative">Creative</div>
+            <div class="template-filter" data-filter="modern">Modern</div>
+            <div class="template-filter" data-filter="minimal">Minimal</div>
+        </div>
+        
+        <!-- Template Grid -->
+        <div class="template-grid">
+            <!-- Professional Template -->
+            <div class="template-card" data-category="professional">
+                <div class="template-tag popular">Popular</div>
+                <div class="template-preview">
+                    <img src="images/templates/professional-resume-template.png" alt="Professional Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('professional')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/professional-resume-template.png', 'Professional Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Professional</h5>
+                    <div class="template-features">
+                        <span class="template-feature">ATS-Friendly</span>
+                        <span class="template-feature">Clean Layout</span>
+                        <span class="template-feature">Traditional</span>
+                    </div>
+                    <p class="template-description">A clean, straightforward design perfect for traditional industries and corporate roles. This template emphasizes professionalism and readability.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('professional')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modern Template -->
+            <div class="template-card" data-category="modern">
+                <div class="template-preview">
+                    <img src="images/templates/modern-resume-template.png" alt="Modern Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('modern')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/modern-resume-template.png', 'Modern Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Modern</h5>
+                    <div class="template-features">
+                        <span class="template-feature">Contemporary</span>
+                        <span class="template-feature">Colorful</span>
+                        <span class="template-feature">Stylish</span>
+                    </div>
+                    <p class="template-description">A contemporary design with stylish elements for roles in marketing, design, and other creative industries.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('modern')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Creative Template -->
+            <div class="template-card" data-category="creative">
+                <div class="template-tag new">New</div>
+                <div class="template-preview">
+                    <img src="images/templates/creative-resume-template.png" alt="Creative Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('creative')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/creative-resume-template.png', 'Creative Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Creative</h5>
+                    <div class="template-features">
+                        <span class="template-feature">Unique</span>
+                        <span class="template-feature">Eye-catching</span>
+                        <span class="template-feature">Designer-friendly</span>
+                    </div>
+                    <p class="template-description">An eye-catching design with bold elements for graphic designers, artists, and other creative professionals.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('creative')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Minimal Template -->
+            <div class="template-card" data-category="minimal">
+                <div class="template-preview">
+                    <img src="images/templates/minimalist-resume-template.png" alt="Minimal Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('minimal')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/minimalist-resume-template.png', 'Minimal Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Minimal</h5>
+                    <div class="template-features">
+                        <span class="template-feature">Simple</span>
+                        <span class="template-feature">Elegant</span>
+                        <span class="template-feature">Space-efficient</span>
+                    </div>
+                    <p class="template-description">A clean, minimalist design with plenty of white space. Perfect for those who prefer simplicity and elegance.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('minimal')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Executive Template -->
+            <div class="template-card" data-category="professional">
+                <div class="template-preview">
+                    <img src="images/templates/executive-resume-template.png" alt="Executive Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('executive')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/executive-resume-template.png', 'Executive Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Executive</h5>
+                    <div class="template-features">
+                        <span class="template-feature">Senior Level</span>
+                        <span class="template-feature">Leadership</span>
+                        <span class="template-feature">Sophisticated</span>
+                    </div>
+                    <p class="template-description">A sophisticated design for executives, managers, and senior-level professionals. Emphasizes leadership and achievements.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('executive')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tech Template -->
+            <div class="template-card" data-category="modern">
+                <div class="template-preview">
+                    <img src="images/templates/tech-resume-template.png" alt="Tech Template">
+                    <div class="template-overlay">
+                        <button class="btn btn-light select-btn" onclick="selectTemplate('tech')">Use This Template</button>
+                    </div>
+                    <button class="preview-btn" onclick="previewTemplate('images/templates/tech-resume-template.png', 'Tech Template')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="template-info">
+                    <h5 class="template-name">Tech</h5>
+                    <div class="template-features">
+                        <span class="template-feature">IT Focused</span>
+                        <span class="template-feature">Skills Visualization</span>
+                        <span class="template-feature">Modern</span>
+                    </div>
+                    <p class="template-description">Specially designed for tech professionals with skill visualization and a modern look. Perfect for developers and IT roles.</p>
+                    <div class="template-actions">
+                        <button class="btn btn-primary w-100" onclick="selectTemplate('tech')">Select Template</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade preview-modal" id="templatePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="previewModalTitle">Template Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="previewModalImage" src="" alt="Template Preview">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="selectFromPreviewBtn">Use This Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-file-alt me-2"></i>Resume Builder</h5>
+                    <p>Build professional resumes in minutes with our easy-to-use builder.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="my-resumes.html" class="text-white">My Resumes</a></li>
+                        <li><a href="template-selection.html" class="text-white">Templates</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i>Jaykool2001@gmail.com</li>
+                        <li><i class="fas fa-phone me-2"></i>+91 7083018771</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p class="mb-0">© 2023 Resume Builder. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api-client.js"></script>
+    <script>
+        // Check authentication status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+            
+            // If not authenticated, redirect to login page
+            if (!isAuthenticated) {
+                window.location.href = 'login.html?redirect=template-selection.html';
+                return;
+            }
+            
+            // Set username in navbar
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            if (userNameDisplay) {
+                const userName = sessionStorage.getItem('userName') || sessionStorage.getItem('userEmail') || 'User';
+                userNameDisplay.textContent = userName.split(' ')[0]; // First name only
+            }
+            
+            // Initialize template filters
+            initializeTemplateFilters();
+            
+            // Set background
+            initializeBackground();
+            
+            // Setup theme switcher
+            initializeThemeSwitcher();
+            
+            // Setup logout
+            initializeLogout();
+        });
+        
+        // Initialize template filters
+        function initializeTemplateFilters() {
+            const filterButtons = document.querySelectorAll('.template-filter');
+            const templateCards = document.querySelectorAll('.template-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Get filter value
+                    const filter = this.getAttribute('data-filter');
+                    
+                    // Filter templates
+                    templateCards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Add template card animations
+            templateCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Avoid triggering when clicking preview button
+                    if (e.target.closest('.preview-btn')) return;
+                    
+                    // Get template ID from the select button
+                    const templateId = this.querySelector('.btn-primary').getAttribute('onclick').match(/'([^']+)'/)[1];
+                    selectTemplate(templateId);
+                });
+            });
+        }
+        
+        // Preview template
+        function previewTemplate(imageSrc, templateName) {
+            event.stopPropagation(); // Prevent the click from triggering parent elements
+            
+            const previewModal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
+            document.getElementById('previewModalImage').src = imageSrc;
+            document.getElementById('previewModalTitle').textContent = templateName + ' Preview';
+            
+            // Extract template ID from template name
+            const templateId = templateName.toLowerCase().replace(' template', '');
+            
+            // Set up select button
+            const selectBtn = document.getElementById('selectFromPreviewBtn');
+            selectBtn.onclick = function() {
+                selectTemplate(templateId);
+                previewModal.hide();
+            };
+            
+            previewModal.show();
+        }
+        
+        // Select template and redirect
+        function selectTemplate(templateId) {
+            // Save selected template to session storage
+            sessionStorage.setItem('selectedTemplate', templateId);
+            
+            // Redirect to the resume builder
+            window.location.href = 'multi-step-resume.html';
+        }
+        
+        // Set background
+        function initializeBackground() {
+            const apiBackground = document.getElementById('apiBackground');
+            if (apiBackground) {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                const imageUrl = `https://source.unsplash.com/featured/${width}x${height}/?office,minimal,desk`;
+                
+                const img = new Image();
+                img.onload = function() {
+                    apiBackground.style.backgroundImage = `url(${imageUrl})`;
+                    apiBackground.style.opacity = '0.15';
+                };
+                img.src = imageUrl;
+            }
+        }
+        
+        // Setup theme switcher
+        function initializeThemeSwitcher() {
+            const themeSwitch = document.getElementById('themeSwitch');
+            const themeSwitchLabel = themeSwitch.nextElementSibling.querySelector('i');
+            
+            themeSwitch.addEventListener('change', function() {
+                if (this.checked) {
+                    document.body.classList.add('dark-theme');
+                    themeSwitchLabel.classList.remove('fa-moon');
+                    themeSwitchLabel.classList.add('fa-sun');
+                    sessionStorage.setItem('darkTheme', 'true');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    themeSwitchLabel.classList.remove('fa-sun');
+                    themeSwitchLabel.classList.add('fa-moon');
+                    sessionStorage.setItem('darkTheme', 'false');
+                }
+            });
+            
+            // Check theme preference
+            const darkTheme = sessionStorage.getItem('darkTheme');
+            if (darkTheme === 'true') {
+                themeSwitch.checked = true;
+                document.body.classList.add('dark-theme');
+                themeSwitchLabel.classList.remove('fa-moon');
+                themeSwitchLabel.classList.add('fa-sun');
+            }
+        }
+        
+        // Initialize logout
+        function initializeLogout() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (!logoutBtn) return;
+            
+            logoutBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                try {
+                    // Call logout API
+                    const response = await fetch('/api/users/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include'
+                    });
+                    
+                    // Clear session storage
+                    sessionStorage.removeItem('isAuthenticated');
+                    sessionStorage.removeItem('userName');
+                    sessionStorage.removeItem('userEmail');
+                    sessionStorage.removeItem('userId');
+                    sessionStorage.removeItem('currentResumeId');
+                    
+                    // Redirect to login
+                    window.location.href = 'login.html';
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                    // Still clear session and redirect even if API fails
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

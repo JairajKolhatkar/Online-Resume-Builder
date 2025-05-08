@@ -1,0 +1,27 @@
+{
+  "name": "obuilder",
+  "version": "1.0.0",
+  "description": "Online Resume Builder - A modern web application for creating professional resumes",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": [
+    "resume",
+    "builder",
+    "mern",
+    "mongodb",
+    "express",
+    "node"
+  ],
+  "author": "Jayesh <jaykool2001@gmail.com> (7083018771)",
+  "license": "All Rights Reserved",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  }
+} 

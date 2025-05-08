@@ -1,0 +1,22 @@
+{
+  "name": "obuilder-client",
+  "version": "1.0.0",
+  "description": "Frontend client for Online Resume Builder",
+  "private": true,
+  "scripts": {
+    "start": "serve -s build",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "Jayesh <jaykool2001@gmail.com> (7083018771)",
+  "dependencies": {
+    "bootstrap": "^5.3.1",
+    "html2pdf.js": "^0.10.1",
+    "@fortawesome/fontawesome-free": "^6.4.2"
+  },
+  "devDependencies": {
+    "vite": "^4.4.11",
+    "serve": "^14.2.1"
+  }
+} 
