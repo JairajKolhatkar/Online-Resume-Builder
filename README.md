@@ -1,4 +1,4 @@
-# OBuilder - Online Resume Builder
+# Online Resume Builder
 
 A modern web application for creating professional resumes with customizable templates and real-time preview.
 
